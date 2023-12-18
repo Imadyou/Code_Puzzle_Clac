@@ -1,0 +1,59 @@
+﻿@page "/calibrationcalculator"
+@using Calibration_Document_calculator.Data
+
+<h3>Calibration Calculator</h3>
+
+<div class="alert alert-danger" role="alert">
+    <p>Please note that the maximum number of characters is approximately 10,000. If your document exceeds this limit, 
+        consider splitting it into multiple sections and calculating the sum manually.</p>
+</div>
+
+
+<form @onsubmit="Calculate">
+    <div class="form-group">
+        <label for="inputText" placeholder="Enter Your text"
+               name="text">Enter Your Text:</label>
+      
+        <textarea id="inputText" class="form-control" @bind="inputText"></textarea>
+        <br />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Calculate</button>
+    <button type="button" class="btn btn-secondary" @onclick="ResetForm">Reset</button>
+</form>
+
+@if (showResult)
+{
+    <br />
+    <p class="card">Sum of combined first and last digits: @result</p>
+}
+
+@code {
+    private string inputText = "";
+    private int result = 0;
+    private bool showResult = false;
+    private CalibrationService service = new CalibrationService();
+
+    private async Task Calculate()
+    {
+        // Ensure inputText is not null or empty before calculation
+        if (!string.IsNullOrEmpty(inputText))
+        {
+            result =  service.CalculateCombinedFirstLastDigitsSum(inputText);
+            showResult = true;
+        }
+        else
+        {
+            // Handle case where inputText is empty
+            // For example, show an error message or set result to 0
+            result = 0;
+            showResult = false;
+        }
+    }
+    private void ResetForm()
+    {
+        inputText = ""; // Reset the input text
+        result = 0; // Reset the result
+        showResult = false; // Hide the result section
+    }
+}
